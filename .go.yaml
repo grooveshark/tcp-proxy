@@ -1,0 +1,4 @@
+---
+path: github.com/grooveshark/tcp-proxy
+deps:
+    - loc: github.com/mediocregopher/flagconfig
