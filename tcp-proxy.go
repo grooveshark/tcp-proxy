@@ -1,9 +1,11 @@
 package main
 
 import (
-	"github.com/mediocregopher/flagconfig"
 	"io"
+	"log"
 	"net"
+
+	"github.com/mediocregopher/flagconfig"
 )
 
 var Local, Remote string
@@ -21,25 +23,27 @@ func main() {
 	fc.RequiredStrParam("remote", "Address to proxy to")
 
 	if err := fc.Parse(); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	Local, Remote = fc.GetStr("local"), fc.GetStr("remote")
 
 	l, err := net.Listen("tcp", Local)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	for {
 		lconn, err := l.Accept()
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 
 		rconn, err := net.Dial("tcp", Remote)
 		if err != nil {
-			panic(err)
+			log.Print(err)
+			lconn.Close()
+			continue
 		}
 
 		go CopyClose(lconn, rconn)
